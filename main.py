@@ -26,7 +26,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 if __name__ == '__main__':
-    application = ApplicationBuilder().token('5824488128:AAEkR8PJY3JCl_T80NqHQChHeeXrdFLMyjA').build()
+    
 
     start_handler = CommandHandler('start', start)
     books_handler = CallbackQueryHandler(book_find_process, "books")

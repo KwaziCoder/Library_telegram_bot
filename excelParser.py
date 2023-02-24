@@ -56,7 +56,8 @@ async def parse_excel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
             else:
                 data_dict[first_level][second_level][third_level][-1].append(rows[i][j])
 
-    print(data_dict)
+    context.bot_data["data"] = data_dict
+    print(context.bot_data["data"])
 
     """
         {

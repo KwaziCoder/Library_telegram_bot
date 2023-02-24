@@ -51,7 +51,7 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         books = data[age][genre][subgenre]
 
         for book in books:
-            await context.bot.send_photo(update.effective_chat.id, "./assets/images/book1.png",
+            await context.bot.send_photo(update.effective_chat.id, "./assets/images/book1.jpg",
                                          f"Название книги: {book['title']}\nАвтор: {book['author']}\nОписание: {book['desc']}")
 
         context.user_data["step"] = 0

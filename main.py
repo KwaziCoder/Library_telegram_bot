@@ -18,16 +18,19 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     context.user_data["polling_in_progress"] = True
 
+    await context.bot.send_message(update.effective_chat.id, "Привет! Меня зовут Федя. Я кибер-сотрудник библиотеки-филиал №15. Не знаешь что бы почитать? Давай я задам тебе пару наводящих вопросов?")
+
+    ages = context.bot_data["data"].keys()
+
     keyboard = [
-        [
-            KeyboardButton("Давай!"),
-        ],
+        [KeyboardButton(age)] for age in ages
     ]
 
     reply_markup = ReplyKeyboardMarkup(keyboard)
 
-    await update.message.reply_text('Привет! Меня зовут Федя. Я кибер-сотрудник библиотеки-филиал №15. Не знаешь что бы почитать? Давай я задам тебе пару наводящих вопросов?', reply_markup=reply_markup)
-
+    await update.message.reply_text(
+        'Какое возрастное ограничение тебе подходит?',
+        reply_markup=reply_markup)
 
 if __name__ == '__main__':
     logging.basicConfig(

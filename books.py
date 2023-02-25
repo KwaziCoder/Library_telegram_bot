@@ -15,19 +15,101 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     if "polling_in_progress" in context.user_data and context.user_data["polling_in_progress"]:
         print("Наш случай!")
 
-        if context.user_data["age"] is None and update.message.text == "Давай!":
+        if context.user_data["age"] is None:
+            if update.message.text in context.bot_data["data"]:
+                age = update.message.text
+                context.user_data["age"] = age
 
-            keyboard = [
-                [
-                    KeyboardButton("1"),
-                ],
-            ]
+                genres = context.bot_data["data"][age].keys()
 
-            reply_markup = ReplyKeyboardMarkup(keyboard)
+                keyboard = [
+                    [KeyboardButton(genre)] for genre in genres
+                ]
 
-            await update.message.reply_text(
-                'Какое возрастное ограничение тебе подходит?',
-                reply_markup=reply_markup)
+                reply_markup = ReplyKeyboardMarkup(keyboard)
+
+                await update.message.reply_text(
+                    'Давай теперь определимся с темой?',
+                    reply_markup=reply_markup)
+
+            else:
+                ages = context.bot_data["data"].keys()
+
+                keyboard = [
+                    [KeyboardButton(age)] for age in ages
+                ]
+
+                reply_markup = ReplyKeyboardMarkup(keyboard)
+
+                await update.message.reply_text(
+                    'Какое возрастное ограничение тебе подходит?',
+                    reply_markup=reply_markup)
+
+        elif context.user_data["genre"] is None:
+            age = context.user_data["age"]
+
+            if update.message.text in context.bot_data["data"][age]:
+                genre = update.message.text
+                context.user_data["genre"] = genre
+
+                subgenres = context.bot_data["data"][age][genre].keys()
+
+                keyboard = [
+                    [KeyboardButton(subgenre)] for subgenre in subgenres
+                ]
+
+                reply_markup = ReplyKeyboardMarkup(keyboard)
+
+                await update.message.reply_text(
+                    'Я тебя понял. Давай уточним?',
+                    reply_markup=reply_markup)
+
+            else:
+                genres = context.bot_data["data"][age].keys()
+
+                keyboard = [
+                    [KeyboardButton(genre)] for genre in genres
+                ]
+
+                reply_markup = ReplyKeyboardMarkup(keyboard)
+
+                await update.message.reply_text(
+                     'Давай теперь определимся с темой?',
+                    reply_markup=reply_markup)
+
+        elif context.user_data["subgenre"] is None:
+            age = context.user_data["age"]
+            genre = context.user_data["genre"]
+
+            if update.message.text in context.bot_data["data"][age][genre]:
+                subgenre = update.message.text
+                context.user_data["subgenre"] = subgenre
+
+                books = context.bot_data["data"][age][genre][subgenre]
+
+                for book in books:
+                    await context.bot.send_photo(update.effective_chat.id, f"./assets/images/{book[3]}",
+                            f"Название книги: {book[0]}\nАвтор: {book[1]}\nОписание: {book[2]}")
+
+                context.user_data["age"] = None
+                context.user_data["genre"] = None
+                context.user_data["subgenre"] = None
+
+                context.user_data["polling_in_progress"] = False
+
+            else:
+                subgenres = context.bot_data["data"][age].keys()
+
+                keyboard = [
+                    [KeyboardButton(subgenre)] for subgenre in subgenres
+                ]
+
+                reply_markup = ReplyKeyboardMarkup(keyboard)
+
+                await update.message.reply_text(
+                    'Я тебя понял. Давай уточним?',
+                    reply_markup=reply_markup)
+
     else:
         print("Не наш случай!")
     # await query.answer()

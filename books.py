@@ -1,6 +1,7 @@
 from telegram import InlineKeyboardButton, Update, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import ContextTypes
 
+from excelParser import parse_excel
 
 """
     context.user_data:
@@ -15,7 +16,31 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     if "polling_in_progress" in context.user_data and context.user_data["polling_in_progress"]:
         print("Наш случай!")
 
-        if context.user_data["age"] is None:
+        if update.message.text == "Продолжить":
+            if "data" not in context.bot_data:
+                await parse_excel(update, context)
+
+            context.user_data["age"] = None
+            context.user_data["genre"] = None
+            context.user_data["subgenre"] = None
+
+            ages = context.bot_data["data"].keys()
+
+            keyboard = [
+                [KeyboardButton(age)] for age in ages
+            ]
+
+            reply_markup = ReplyKeyboardMarkup(keyboard)
+
+            await update.message.reply_text(
+                'Какое возрастное ограничение тебе подходит?',
+                reply_markup=reply_markup)
+        elif update.message.text == "Спасибо за помощь":
+            await context.bot.send_message(update.effective_chat.id,
+                                     'Тебе спасибо! Ты всегда можешь обратиться ко мне через меню ниже.\n\n Буду ждать тебя снова!')
+            context.user_data["polling_in_progress"] = False
+
+        elif context.user_data["age"] is None:
             if update.message.text in context.bot_data["data"]:
                 age = update.message.text
                 context.user_data["age"] = age
@@ -87,18 +112,27 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
                 books = context.bot_data["data"][age][genre][subgenre]
 
+                await context.bot.send_message(update.effective_chat.id, "Смотри, я могу предложить посмотреть эти варианты")
+
                 for book in books:
                     await context.bot.send_photo(update.effective_chat.id, f"./assets/images/{book[3]}",
                             f"Название книги: {book[0]}\nАвтор: {book[1]}\nОписание: {book[2]}")
 
-                context.user_data["age"] = None
-                context.user_data["genre"] = None
-                context.user_data["subgenre"] = None
+                await context.bot.send_message(update.effective_chat.id, "Надеюсь, тебе понравились мои рекомендации.\n\nБыл рад стараться. Любую книгу из списка ты можешь взять в библиотеке-филиале №15 по адресу: Мурманск, проспект Ленина 94. Номер телефона для связи: 42-21-67.")
 
-                context.user_data["polling_in_progress"] = False
+                keyboard = [
+                    [KeyboardButton("Продолжить")],
+                    [KeyboardButton("Спасибо за помощь")]
+                ]
+
+                reply_markup = ReplyKeyboardMarkup(keyboard)
+
+                await update.message.reply_text(
+                    'Если тебе все еще нужна моя помощь - нажми “Продолжить”',
+                    reply_markup=reply_markup)
 
             else:
-                subgenres = context.bot_data["data"][age].keys()
+                subgenres = context.bot_data["data"][age][genre].keys()
 
                 keyboard = [
                     [KeyboardButton(subgenre)] for subgenre in subgenres
@@ -112,32 +146,3 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
     else:
         print("Не наш случай!")
-    # await query.answer()
-
-    #
-    # if (current_step > 0):
-    #     context.user_data[user_data_keys_by_steps[current_step]] = query.message.reply_markup.inline_keyboard[0][0].text
-    #
-    #
-    # if (context.user_data["step"] <= 2):
-    #     keyboard = [
-    #         list(map(lambda answer: InlineKeyboardButton(answer, callback_data="books" ), steps[current_step]["answers"]))
-    #     ]
-    #
-    #     reply_markup = InlineKeyboardMarkup(keyboard)
-    #
-    #     await update.callback_query.message.reply_text(steps[current_step]["question"], reply_markup=reply_markup)
-    #
-    #     context.user_data["step"] += 1
-    # else:
-    #     age = context.user_data["age"]
-    #     genre = context.user_data["genre"]
-    #     subgenre = context.user_data["subgenre"]
-    #
-    #     books = data[age][genre][subgenre]
-    #
-    #     for book in books:
-    #         await context.bot.send_photo(update.effective_chat.id, "./assets/images/book1.jpg",
-    #                                      f"Название книги: {book['title']}\nАвтор: {book['author']}\nОписание: {book['desc']}")
-    #
-    #     context.user_data["step"] = 0

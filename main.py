@@ -1,5 +1,5 @@
 import logging
-from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
+from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, Bot, MenuButton, BotCommand
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters, CallbackQueryHandler
 
 from admin import upload_doc
@@ -8,6 +8,7 @@ from excelParser import parse_excel
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await context.bot.set_my_commands([BotCommand("start", "Подобрать книги")])
 
     if "data" not in context.bot_data:
         await parse_excel(update, context)

@@ -35,9 +35,14 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             await update.message.reply_text(
                 'Какое возрастное ограничение тебе подходит?',
                 reply_markup=reply_markup)
+
         elif update.message.text == "Спасибо за помощь":
-            await context.bot.send_message(update.effective_chat.id,
-                                     'Тебе спасибо! Ты всегда можешь обратиться ко мне через меню ниже.\n\n Буду ждать тебя снова!')
+            keyboard = [[KeyboardButton("Подобрать книги")]]
+            reply_markup = ReplyKeyboardMarkup(keyboard)
+            await update.message.reply_text(
+                'Тебе спасибо! Ты всегда можешь обратиться ко мне через меню ниже.\n\n Буду ждать тебя снова!',
+                reply_markup=reply_markup)
+
             context.user_data["polling_in_progress"] = False
 
         elif context.user_data["age"] is None:
@@ -146,3 +151,25 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
     else:
         print("Не наш случай!")
+
+        if update.message.text == "Подобрать книги":
+            if "data" not in context.bot_data:
+                await parse_excel(update, context)
+
+            context.user_data["age"] = None
+            context.user_data["genre"] = None
+            context.user_data["subgenre"] = None
+
+            context.user_data["polling_in_progress"] = True
+
+            ages = context.bot_data["data"].keys()
+
+            keyboard = [
+                [KeyboardButton(age)] for age in ages
+            ]
+
+            reply_markup = ReplyKeyboardMarkup(keyboard)
+
+            await update.message.reply_text(
+                'Какое возрастное ограничение тебе подходит?',
+                reply_markup=reply_markup)

@@ -1,14 +1,16 @@
 import logging
-from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, Bot, MenuButton, BotCommand
+from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, Bot, MenuButton, BotCommand, \
+    BotCommandScopeAllChatAdministrators, BotCommandScope
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters, CallbackQueryHandler
 
-from admin import upload_doc
+from admin import upload_doc, auth
 from books import book_find_process
 from excelParser import parse_excel
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await context.bot.set_my_commands([BotCommand("start", "Подобрать книги")])
+    await context.bot.set_my_commands(
+        [BotCommand("start", "Подобрать книги")])
 
     if "data" not in context.bot_data:
         await parse_excel(update, context)
@@ -45,13 +47,13 @@ if __name__ == '__main__':
     books_handler = MessageHandler(filters.Regex(r"\w+"), book_find_process)
 
     upload_doc_handler = MessageHandler(filters.Document.ALL, upload_doc)
-    parse_excel_handler = CommandHandler('parsing', parse_excel)
+    # auth_handler = CommandHandler('auth', auth)
 
     application.add_handler(start_handler)
 
     application.add_handler(books_handler)
 
     application.add_handler(upload_doc_handler)
-    application.add_handler(parse_excel_handler)
+    # application.add_handler(auth_handler)
 
     application.run_polling()

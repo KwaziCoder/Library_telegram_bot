@@ -1,16 +1,28 @@
 from telegram import Update
 from telegram.ext import ContextTypes
 
+from excelParser import parse_excel
 
-# async def upload_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-#     query = update.callback_query
-#     await query.delete_message()
-#     context.bot.send_message(update.effective_chat.id, text="Хорошо. Загрузи документ и я сохраню его.")
+ADMINS = [763665227]
+
+
+async def auth(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if update.message.from_user.id in ADMINS:
+        print("Admin")
+        context.user_data["is_admin"] = True
+    else:
+        print("Not admin")
+        context.user_data["is_admin"] = False
 
 
 async def upload_doc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    file = await context.bot.get_file(update.message.document)
-    await file.download_to_drive('./assets/files/books.xlsx')
+    if update.message.from_user.id in ADMINS:
+        file = await context.bot.get_file(update.message.document)
+        await file.download_to_drive('./assets/files/books.xlsx')
+        await parse_excel(update, context)
+    else:
+        await context.bot.send_message(update.effective_chat.id, "Отказано в доступе! Авторизируйтесь как администратор!")
+
 
 
 

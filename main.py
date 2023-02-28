@@ -3,7 +3,7 @@ from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, Bot, MenuButto
     BotCommandScopeAllChatAdministrators, BotCommandScope
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters, CallbackQueryHandler
 
-from admin import upload_doc, auth
+from admin import upload_doc, auth, upload_image
 from books import book_find_process
 from excelParser import parse_excel
 
@@ -46,7 +46,8 @@ if __name__ == '__main__':
     start_handler = CommandHandler('start', start)
     books_handler = MessageHandler(filters.Regex(r"\w+"), book_find_process)
 
-    upload_doc_handler = MessageHandler(filters.Document.ALL, upload_doc)
+    upload_doc_handler = MessageHandler(filters.Document.FileExtension("xlsx"), upload_doc)
+    upload_image_handler = MessageHandler(filters.Document.IMAGE, upload_image)
     # auth_handler = CommandHandler('auth', auth)
 
     application.add_handler(start_handler)
@@ -54,6 +55,7 @@ if __name__ == '__main__':
     application.add_handler(books_handler)
 
     application.add_handler(upload_doc_handler)
+    application.add_handler(upload_image_handler)
     # application.add_handler(auth_handler)
 
     application.run_polling()

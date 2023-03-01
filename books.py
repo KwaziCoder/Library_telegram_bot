@@ -30,7 +30,7 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
                 [KeyboardButton(age)] for age in ages
             ]
 
-            reply_markup = ReplyKeyboardMarkup(keyboard)
+            reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
             await update.message.reply_text(
                 'Какое возрастное ограничение тебе подходит?',
@@ -38,7 +38,7 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
         elif update.message.text == "Спасибо за помощь":
             keyboard = [[KeyboardButton("Подобрать книги")]]
-            reply_markup = ReplyKeyboardMarkup(keyboard)
+            reply_markup = ReplyKeyboardMarkup(keyboard,  resize_keyboard=True)
             await update.message.reply_text(
                 'Тебе спасибо! Ты всегда можешь обратиться ко мне через меню ниже.\n\n Буду ждать тебя снова!',
                 reply_markup=reply_markup)
@@ -56,7 +56,7 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
                     [KeyboardButton(genre)] for genre in genres
                 ]
 
-                reply_markup = ReplyKeyboardMarkup(keyboard)
+                reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
                 await update.message.reply_text(
                     'Давай теперь определимся с темой?',
@@ -69,7 +69,7 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
                     [KeyboardButton(age)] for age in ages
                 ]
 
-                reply_markup = ReplyKeyboardMarkup(keyboard)
+                reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
                 await update.message.reply_text(
                     'Какое возрастное ограничение тебе подходит?',
@@ -88,7 +88,7 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
                     [KeyboardButton(subgenre)] for subgenre in subgenres
                 ]
 
-                reply_markup = ReplyKeyboardMarkup(keyboard)
+                reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
                 await update.message.reply_text(
                     'Я тебя понял. Давай уточним?',
@@ -101,7 +101,7 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
                     [KeyboardButton(genre)] for genre in genres
                 ]
 
-                reply_markup = ReplyKeyboardMarkup(keyboard)
+                reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
                 await update.message.reply_text(
                      'Давай теперь определимся с темой?',
@@ -130,7 +130,7 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
                     [KeyboardButton("Спасибо за помощь")]
                 ]
 
-                reply_markup = ReplyKeyboardMarkup(keyboard)
+                reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
                 await update.message.reply_text(
                     'Если тебе все еще нужна моя помощь - нажми “Продолжить”',
@@ -143,7 +143,7 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
                     [KeyboardButton(subgenre)] for subgenre in subgenres
                 ]
 
-                reply_markup = ReplyKeyboardMarkup(keyboard)
+                reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
                 await update.message.reply_text(
                     'Я тебя понял. Давай уточним?',
@@ -168,7 +168,7 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
                 [KeyboardButton(age)] for age in ages
             ]
 
-            reply_markup = ReplyKeyboardMarkup(keyboard)
+            reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
             await update.message.reply_text(
                 'Какое возрастное ограничение тебе подходит?',

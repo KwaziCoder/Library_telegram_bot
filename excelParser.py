@@ -1,9 +1,15 @@
+import logging
+import time
+
 from telegram import Update
 from telegram.ext import ContextTypes
 from openpyxl import load_workbook
 
 
 async def parse_excel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    logging.info("Started to parse excel with data!")
+    excel_parse_start_time = time.time()
+
     wb = load_workbook(filename='./assets/files/books.xlsx')
     ws = wb.active
     ws_list = list(ws)
@@ -22,7 +28,6 @@ async def parse_excel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         [$][5] - Описание книги
         [$][6] - Название картинки
     """
-    print(rows)
 
     data_dict = dict()
 
@@ -57,7 +62,9 @@ async def parse_excel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
                 data_dict[first_level][second_level][third_level][-1].append(rows[i][j])
 
     context.bot_data["data"] = data_dict
-    print(context.bot_data["data"])
+
+    excel_parse_finish_time = time.time()
+    logging.info(f"Finished to parse excel in { (excel_parse_finish_time - excel_parse_start_time) * 1000} milliseconds!")
 
     """
         {

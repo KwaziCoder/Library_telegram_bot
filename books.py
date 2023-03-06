@@ -1,3 +1,5 @@
+import logging
+
 from telegram import InlineKeyboardButton, Update, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import ContextTypes
 
@@ -14,9 +16,11 @@ from excelParser import parse_excel
 async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     if "polling_in_progress" in context.user_data and context.user_data["polling_in_progress"]:
-        print("Наш случай!")
+        logging.info("Poll in progress! Message goes to inner scope!")
 
         if update.message.text == "Продолжить":
+            logging.info("New circle of poll was launched!")
+
             if "data" not in context.bot_data:
                 await parse_excel(update, context)
 
@@ -37,6 +41,8 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
                 reply_markup=reply_markup)
 
         elif update.message.text == "Спасибо за помощь":
+            logging.info("Poll has finished!")
+
             keyboard = [[KeyboardButton("Подобрать книги")]]
             reply_markup = ReplyKeyboardMarkup(keyboard,  resize_keyboard=True)
             await update.message.reply_text(
@@ -125,6 +131,8 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
                 await context.bot.send_message(update.effective_chat.id, "Надеюсь, тебе понравились мои рекомендации.\n\nБыл рад стараться. Любую книгу из списка ты можешь взять в библиотеке-филиале №15 по адресу: Мурманск, проспект Ленина 94. Номер телефона для связи: 42-21-67.")
 
+                logging.info("Sent result of poll!")
+
                 keyboard = [
                     [KeyboardButton("Продолжить")],
                     [KeyboardButton("Спасибо за помощь")]
@@ -150,9 +158,10 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
                     reply_markup=reply_markup)
 
     else:
-        print("Не наш случай!")
+        logging.info("Poll is finished! Message goes to outer scope!")
 
         if update.message.text == "Подобрать книги":
+            logging.info("New circle of poll was launched!")
             if "data" not in context.bot_data:
                 await parse_excel(update, context)
 

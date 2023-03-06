@@ -1,3 +1,5 @@
+import logging
+
 from telegram import Update
 from telegram.ext import ContextTypes
 
@@ -8,15 +10,17 @@ ADMINS = [763665227]
 
 async def auth(update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
     if update.message.from_user.id in ADMINS:
+        logging.info("User is admin! Access granted!")
         return True
     else:
         await context.bot.send_message(update.effective_chat.id,
                                        "Отказано в доступе! У вас нет прав закачивание файлов!")
+        logging.info("User is not admin! Access denied!")
         return False
 
 
 async def upload_doc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    print("Document")
+    logging.info("Try to add a new excel file was detected!")
 
     if await auth(update, context):
         excel = update.message.document
@@ -28,7 +32,7 @@ async def upload_doc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
 
 
 async def upload_image(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    print("Image")
+    logging.info("Try to add image was detected!")
 
     if await auth(update, context):
         image = update.message.document

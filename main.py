@@ -2,7 +2,7 @@ import logging
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
 
-from admin import upload_doc, auth, upload_image, define_sticker
+from admin import upload_doc, auth, upload_image, define_sticker, info
 from books import book_find_process
 from excelParser import parse_excel
 
@@ -48,6 +48,8 @@ if __name__ == '__main__':
         logging.info("App has been successfully built!")
 
         start_handler = CommandHandler('start', start)
+        info_handler = CommandHandler('info', info)
+
         books_handler = MessageHandler(filters.Regex(r"\w+"), book_find_process)
 
         stickers_handler = MessageHandler(filters.Sticker.ALL, define_sticker)
@@ -56,6 +58,7 @@ if __name__ == '__main__':
         upload_image_handler = MessageHandler(filters.Document.IMAGE, upload_image)
 
         application.add_handler(start_handler)
+        application.add_handler(info_handler)
 
         application.add_handler(books_handler)
 

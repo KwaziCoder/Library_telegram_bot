@@ -5,7 +5,7 @@ from telegram.ext import ContextTypes
 
 from excelParser import parse_excel
 
-ADMINS = [763665227]
+ADMINS = [763665227, 879325220]
 
 
 async def auth(update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
@@ -14,25 +14,37 @@ async def auth(update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
         return True
     else:
         await context.bot.send_message(update.effective_chat.id,
-                                       "Отказано в доступе! У вас нет прав закачивание файлов!")
+                                       "Отказано в доступе! У вас нет прав на загрузку файлов!")
         logging.info("User is not admin! Access denied!")
         return False
 
 
+async def info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if await auth(update, context):
+        await context.bot.send_message(update.effective_chat.id,
+                                       "Понял тебя! Сейчас я объясню, как обновить у меня данные и создать тем самым новый контент для наших посетителей библиотеки!")
+        await context.bot.send_message(update.effective_chat.id,
+                                       "Шаг 1. Пришли мне обновленный excel-файл с данными для опроса пользователей. Помни! В excel-файле должна быть определенная структура полей! Нет образца для создания правильного документа? Не беда! Напиши команду /data и я пришлю файл, на который ориентируюсь сейчас, когда общаюсь с пользователями.")
+        await context.bot.send_message(update.effective_chat.id,
+                                       "Шаг 2. Пришли мне все картинки, которые были указаны тобой в excel-файле! Помни! Название и расширение (.jpg, .jpeg, .png и т.д.) каждой картинки должны В ТОЧНОСТИ соответствовать тем наименованиям, которые записаны в excel-файле.")
+        await context.bot.send_message(update.effective_chat.id,
+                                       "Шаг 3. Когда все файлы загружены, отправь мне команду /start и проверь мою работу на новых данных.")
+        await context.bot.send_message(update.effective_chat.id,
+                                       "Вот и всё! Дело не хитрое! Удачи тебе, коллега!")
+
 async def upload_doc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    logging.info("Try to add a new excel file was detected!")
+    logging.info("Try of adding a new excel file was detected!")
 
     if await auth(update, context):
         excel = update.message.document
-        if excel.file_name == "books.xlsx":
-            file = await context.bot.get_file(excel)
-            await file.download_to_drive('./assets/files/books.xlsx')
-            await parse_excel(update, context)
-            await context.bot.send_message(update.effective_chat.id, "Файл 'books.xlsx' загружен!")
+        file = await context.bot.get_file(excel)
+        await file.download_to_drive('./assets/files/books.xlsx')
+        await parse_excel(update, context)
+        await context.bot.send_message(update.effective_chat.id, "Данные обновлены!")
 
 
 async def upload_image(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    logging.info("Try to add image was detected!")
+    logging.info("Try of adding an image was detected!")
 
     if await auth(update, context):
         image = update.message.document

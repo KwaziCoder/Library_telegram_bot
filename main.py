@@ -2,7 +2,7 @@ import logging
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
 
-from admin import upload_doc, auth, upload_image, define_sticker, info
+from admin import upload_doc, auth, upload_image, define_sticker, info, get_data, upload_photo, upload_zip
 from books import book_find_process
 from excelParser import parse_excel
 
@@ -49,23 +49,29 @@ if __name__ == '__main__':
 
         start_handler = CommandHandler('start', start)
         info_handler = CommandHandler('info', info)
+        data_handler = CommandHandler('data', get_data)
 
         books_handler = MessageHandler(filters.Regex(r"\w+"), book_find_process)
 
         stickers_handler = MessageHandler(filters.Sticker.ALL, define_sticker)
 
         upload_doc_handler = MessageHandler(filters.Document.FileExtension("xlsx"), upload_doc)
+        upload_zip_handler = MessageHandler(filters.Document.ZIP, upload_zip)
         upload_image_handler = MessageHandler(filters.Document.IMAGE, upload_image)
+        upload_photo_handler = MessageHandler(filters.PHOTO, upload_photo)
 
         application.add_handler(start_handler)
         application.add_handler(info_handler)
+        application.add_handler(data_handler)
 
         application.add_handler(books_handler)
 
         application.add_handler(stickers_handler)
 
         application.add_handler(upload_doc_handler)
+        application.add_handler(upload_zip_handler)
         application.add_handler(upload_image_handler)
+        application.add_handler(upload_photo_handler)
 
         logging.info("All handlers are added!")
         logging.info("App start running...")

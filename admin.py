@@ -1,4 +1,5 @@
 import logging
+from zipfile import ZipFile
 
 from telegram import Update
 from telegram.ext import ContextTypes
@@ -32,6 +33,10 @@ async def info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await context.bot.send_message(update.effective_chat.id,
                                        "Вот и всё! Дело не хитрое! Удачи тебе, коллега!")
 
+async def get_data (update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if await auth(update, context):
+        await context.bot.send_document(update.effective_chat.id, './assets/files/books.xlsx')
+
 async def upload_doc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     logging.info("Try of adding a new excel file was detected!")
 
@@ -43,6 +48,18 @@ async def upload_doc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         await context.bot.send_message(update.effective_chat.id, "Данные обновлены!")
 
 
+async def upload_zip(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    logging.info("Try of adding a zip file was detected!")
+
+    if await auth(update, context):
+        zip_path = update.message.document
+        zip_file = await context.bot.get_file(zip_path)
+        await zip_file.download_to_drive('./assets/files/images.zip')
+        with ZipFile('./assets/files/images.zip', 'r') as zip_arcive:
+            zip_arcive.extractall('./assets/images')
+    await context.bot.send_message(update.effective_chat.id, "Изображения загружены!")
+
+
 async def upload_image(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     logging.info("Try of adding an image was detected!")
 
@@ -51,6 +68,13 @@ async def upload_image(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         file = await context.bot.get_file(image.file_id)
         await file.download_to_drive(f'./assets/images/{image.file_name}')
         await context.bot.send_message(update.effective_chat.id, f"Файл '{image.file_name}' успешно загружен!")
+
+
+async def upload_photo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    logging.info("Try of adding an photo was detected!")
+
+    if await auth(update, context):
+        await context.bot.send_message(update.effective_chat.id, 'Прошу прощения, но я принимаю изображения только в формате файлов. В окне загрузки своих картинок обязательно снимите галочку "Сжать изображение".')
 
 
 async def define_sticker(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

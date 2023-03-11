@@ -5,6 +5,7 @@ from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, Messa
 from admin import upload_doc, auth, upload_image, define_sticker, info, get_data, upload_photo, upload_zip
 from books import book_find_process
 from excelParser import parse_excel
+from logger import set_logger
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -38,10 +39,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     logging.info("Started poll!")
 
 if __name__ == '__main__':
-    logging.basicConfig(
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        level=logging.INFO
-    )
+    set_logger()
+
     try:
         application = ApplicationBuilder().token('TOKEN').build()
 

@@ -1,48 +1,26 @@
 import logging
-from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
+from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
 
-from admin import upload_doc, auth, upload_image, define_sticker, info, get_data, upload_photo, upload_zip
-from books import book_find_process
-from excelParser import parse_excel
+from admin import upload_doc, upload_image, define_sticker, info, get_data, upload_photo, upload_zip
+from books import book_find_process, start_poll
 from logger import set_logger
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     logging.info("Command 'start' was entered!")
 
-    if "data" not in context.bot_data:
-        logging.info("No data!")
-        await parse_excel(update, context)
-
-    context.user_data["age"] = None
-    context.user_data["genre"] = None
-    context.user_data["subgenre"] = None
-
-    context.user_data["polling_in_progress"] = True
-
-    await context.bot.send_sticker(update.effective_chat.id, "CAACAgUAAxkBAAIEhGP_myRO81SMdRKquFUQdvRu7zs6AAKCAwAC6QrIA4xZA7HpW8S3LgQ")
+    await context.bot.send_sticker(update.effective_chat.id, "TOKEN")
     await context.bot.send_message(update.effective_chat.id, "Привет! Меня зовут Федя. Я кибер-сотрудник библиотеки-филиал №15. Не знаешь что бы почитать? Давай я задам тебе пару наводящих вопросов?")
 
-    ages = context.bot_data["data"].keys()
+    await start_poll(update, context)
 
-    keyboard = [
-        [KeyboardButton(age)] for age in ages
-    ]
-
-    reply_markup = ReplyKeyboardMarkup(keyboard)
-
-    await update.message.reply_text(
-        'Какое возрастное ограничение тебе подходит?',
-        reply_markup=reply_markup)
-
-    logging.info("Started poll!")
 
 if __name__ == '__main__':
     set_logger()
 
     try:
-        application = ApplicationBuilder().token('TOKEN').build()
+        application = ApplicationBuilder().token('6217836945:AAEh46tfItXj6bO9LYNB5-7hireCLdJLIAc').build()
 
         logging.info("App has been successfully built!")
 

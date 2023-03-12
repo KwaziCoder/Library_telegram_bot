@@ -21,6 +21,8 @@ async def auth(update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
 
 
 async def info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    logging.info("Command 'info' was entered!")
+
     if await auth(update, context):
         await context.bot.send_message(update.effective_chat.id,
                                        "Понял тебя! Сейчас я объясню, как обновить у меня данные и создать тем самым новый контент для наших посетителей библиотеки!")
@@ -33,9 +35,13 @@ async def info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await context.bot.send_message(update.effective_chat.id,
                                        "Вот и всё! Дело не хитрое! Удачи тебе, коллега!")
 
-async def get_data (update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+
+async def get_data(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    logging.info("Command 'data' was entered!")
+
     if await auth(update, context):
         await context.bot.send_document(update.effective_chat.id, './assets/files/books.xlsx')
+
 
 async def upload_doc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     logging.info("Try of adding a new excel file was detected!")

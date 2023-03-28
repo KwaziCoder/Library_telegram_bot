@@ -6,11 +6,16 @@ from telegram.ext import ContextTypes
 from openpyxl import load_workbook
 
 
-async def parse_excel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def parse_excel(update: Update, context: ContextTypes.DEFAULT_TYPE, file=None) -> None:
     logging.info("Started to parse excel with data!")
     excel_parse_start_time = time.time()
 
-    wb = load_workbook(filename='./assets/files/books.xlsx')
+    file_path = './assets/files/books.xlsx'
+
+    if file:
+        file_path = file
+
+    wb = load_workbook(filename=file_path)
     ws = wb.active
     ws_list = list(ws)
 

@@ -47,39 +47,40 @@ async def get_data(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def upload_doc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     logging.info("Try of adding a new excel file was detected!")
 
-    context.user_data["test_mode"] = True
-
     if await auth(update, context):
+        context.user_data["test_mode"] = True
+
         excel = update.message.document
         file = await context.bot.get_file(excel)
-        await file.download_to_drive('./assets/files/books.xlsx')
+        await file.download_to_drive('./assets/test_files/books.xlsx')
         await parse_excel(update, context)
         await context.bot.send_message(update.effective_chat.id, "Данные загружены! ВНИМАНИЕ! Включен ТЕСТОВЫЙ режим!\n\nОтправь мне команду /start и проверь, нормально ли работает опрос на новых данных.\n\nЕсли все хорошо, то отправь мне команду /update, чтобы обновить данные для всех пользователей.\n\nЧтобы вернуться к старым данным и выйти из тестового режима, отправь мне команду /cancel")
 
 
 async def update_data(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    logging.info("Process of updating data is launched!")
+    if await auth(update, context):
+        logging.info("Process of updating data is launched!")
 
-    context.bot_data["data"] = context.user_data["data"]
-    context.bot_data["update_date"] = time.time()
+        context.bot_data["data"] = context.user_data["data"]
+        context.bot_data["update_date"] = time.time()
 
-    context.user_data["test_mode"] = False
+        context.user_data["test_mode"] = False
 
-    await context.bot.send_message(update.effective_chat.id,
-                                   "Данные обновлены и стали доступны всем пользователям! Тестовый режим отключен!")
+        await context.bot.send_message(update.effective_chat.id,
+                                       "Данные обновлены и стали доступны всем пользователям! Тестовый режим отключен!")
 
-    logging.info("Process of updating data is finished successfully!")
+        logging.info("Process of updating data is finished successfully!")
 
 
 async def cancel_update_data(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if await auth(update, context):
+        context.user_data["data"] = context.bot_data["data"]
+        context.user_data["test_mode"] = False
 
-    context.user_data["data"] = context.bot_data["data"]
-    context.user_data["test_mode"] = False
+        await context.bot.send_message(update.effective_chat.id,
+                                       "Отмена обновления данных! Тестовый режим отключен!")
 
-    await context.bot.send_message(update.effective_chat.id,
-                                   "Отмена обновления данных! Тестовый режим отключен!")
-
-    logging.info("Process of updating data is canceled!")
+        logging.info("Process of updating data is canceled!")
 
 
 async def upload_zip(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

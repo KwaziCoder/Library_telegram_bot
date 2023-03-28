@@ -10,8 +10,8 @@ from logger import set_logger
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     logging.info("Command 'start' was entered!")
 
-    await context.bot.send_sticker(update.effective_chat.id, "TOKEN")
-    await context.bot.send_message(update.effective_chat.id, "Привет! Меня зовут Федя. Я кибер-сотрудник библиотеки-филиал №15. Не знаешь что бы почитать? Давай я задам тебе пару наводящих вопросов?")
+    await context.bot.send_sticker(update.effective_chat.id, "CAACAgUAAxkBAAIEhGP_myRO81SMdRKquFUQdvRu7zs6AAKCAwAC6QrIA4xZA7HpW8S3LgQ")
+    await context.bot.send_message(update.effective_chat.id, "Привет! Меня зовут Федя. Я кибер-сотрудник библиотеки-филиала №15. Не знаешь что бы почитать? Давай я задам тебе пару наводящих вопросов?")
 
     await start_poll(update, context)
 
@@ -20,7 +20,7 @@ if __name__ == '__main__':
     set_logger()
 
     try:
-        application = ApplicationBuilder().token('6217836945:AAEh46tfItXj6bO9LYNB5-7hireCLdJLIAc').build()
+        application = ApplicationBuilder().token('TOKEN').build()
 
         logging.info("App has been successfully built!")
 

@@ -47,18 +47,16 @@ async def finish_poll(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
 
     context.user_data["polling_in_progress"] = False
 
-    await send_reply_keyboard(update, ["Подобрать книги"], 'Тебе спасибо! Ты всегда можешь обратиться ко мне через меню ниже.\n\n Буду ждать тебя снова!')
+    await send_reply_keyboard(update, ["Подобрать книги"], 'Тебе спасибо! Ты всегда можешь обратиться ко мне через меню ниже.\n\nБуду ждать тебя снова!')
 
 
 async def send_result(update: Update, context: ContextTypes.DEFAULT_TYPE, books) -> None:
-    await context.bot.send_message(update.effective_chat.id, "Смотри, я могу предложить посмотреть эти варианты")
-
     for book in books:
         await context.bot.send_photo(update.effective_chat.id, f"./assets/images/{book[3]}",
                                      f"Название книги: {book[0]}\nАвтор: {book[1]}\nОписание: {book[2]}")
 
     await context.bot.send_message(update.effective_chat.id,
-                                   "Надеюсь, тебе понравились мои рекомендации.\n\nБыл рад стараться. Любую книгу из списка ты можешь взять в библиотеке-филиале №15 по адресу: Мурманск, проспект Ленина 94. Номер телефона для связи: 42-21-67.")
+                                   "Надеюсь, тебе понравились мои рекомендации.\n\nБыл рад стараться. Любую книгу из списка ты можешь взять в библиотеке-филиале №15 по адресу: Мурманск, проспект Ленина 94. Номер телефона для связи: 42-21-67.\n\nЕсли тебе все еще нужна моя помощь - нажми “Продолжить”")
 
     logging.info("Sent result of poll!")
 
@@ -111,7 +109,7 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             if update.message.text in context.bot_data["data"][age][genre]:
                 finish_answers = ["Продолжить", "Спасибо за помощь"]
 
-                await send_reply_keyboard(update, finish_answers, 'Если тебе все еще нужна моя помощь - нажми “Продолжить”')
+                await send_reply_keyboard(update, finish_answers, 'Смотри, я могу предложить посмотреть эти варианты...')
                 
                 subgenre = update.message.text
                 context.user_data["subgenre"] = subgenre

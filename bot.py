@@ -2,7 +2,8 @@ import logging
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
 
-from admin import upload_doc, upload_image, define_sticker, info, get_data, upload_photo, upload_zip
+from admin import upload_doc, upload_image, define_sticker, info, get_data, upload_photo, upload_zip, update_data, \
+    cancel_update_data
 from books import book_find_process, start_poll
 from logger import set_logger
 
@@ -27,6 +28,8 @@ if __name__ == '__main__':
         start_handler = CommandHandler('start', start)
         info_handler = CommandHandler('info', info)
         data_handler = CommandHandler('data', get_data)
+        update_data_handler = CommandHandler('update', update_data)
+        cancel_update_data_handler = CommandHandler('cancel', cancel_update_data)
 
         books_handler = MessageHandler(filters.Regex(r"\w+"), book_find_process)
 
@@ -40,6 +43,8 @@ if __name__ == '__main__':
         application.add_handler(start_handler)
         application.add_handler(info_handler)
         application.add_handler(data_handler)
+        application.add_handler(update_data_handler)
+        application.add_handler(cancel_update_data_handler)
 
         application.add_handler(books_handler)
 

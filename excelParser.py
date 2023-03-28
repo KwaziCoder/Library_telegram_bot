@@ -61,8 +61,16 @@ async def parse_excel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
             else:
                 data_dict[first_level][second_level][third_level][-1].append(rows[i][j])
 
-    context.bot_data["data"] = data_dict
-    context.bot_data["update_date"] = time.time()
+    test_mode = False
+
+    if "test_mode" in context.user_data:
+        test_mode = context.user_data["test_mode"]
+
+    if test_mode:
+        context.user_data["data"] = data_dict
+    else:
+        context.bot_data["data"] = data_dict
+        context.bot_data["update_date"] = time.time()
 
     excel_parse_finish_time = time.time()
     logging.info(f"Finished to parse excel in { (excel_parse_finish_time - excel_parse_start_time) * 1000} milliseconds!")

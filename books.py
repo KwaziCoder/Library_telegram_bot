@@ -28,15 +28,26 @@ async def send_reply_keyboard(update: Update, answers, question) -> None:
 async def start_poll(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     logging.info("Started poll")
 
-    if "data" not in context.user_data:
-        if "data" not in context.bot_data:
-            await parse_excel(update, context)
-        context.user_data["data"] = dict(context.bot_data["data"])
-        context.user_data["update_date"] = context.bot_data["update_date"]
-    else:
-        if context.user_data["update_date"] != context.bot_data["update_date"]:
+    test_mode = False
+
+    if "test_mode" in context.user_data:
+        test_mode = context.user_data["test_mode"]
+
+    if not test_mode:
+        if "data" not in context.user_data:
+            if "data" not in context.bot_data:
+                await parse_excel(update, context)
             context.user_data["data"] = dict(context.bot_data["data"])
             context.user_data["update_date"] = context.bot_data["update_date"]
+        else:
+            user_update_data = 0
+
+            if "update_date" in context.user_data:
+                user_update_data = context.user_data["update_date"]
+
+            if user_update_data != context.bot_data["update_date"]:
+                context.user_data["data"] = dict(context.bot_data["data"])
+                context.user_data["update_date"] = context.bot_data["update_date"]
 
     context.user_data["age"] = None
     context.user_data["genre"] = None

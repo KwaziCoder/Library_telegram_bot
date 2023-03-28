@@ -28,8 +28,15 @@ async def send_reply_keyboard(update: Update, answers, question) -> None:
 async def start_poll(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     logging.info("Started poll")
 
-    if "data" not in context.bot_data:
-        await parse_excel(update, context)
+    if "data" not in context.user_data:
+        if "data" not in context.bot_data:
+            await parse_excel(update, context)
+        context.user_data["data"] = dict(context.bot_data["data"])
+        context.user_data["update_date"] = context.bot_data["update_date"]
+    else:
+        if context.user_data["update_date"] != context.bot_data["update_date"]:
+            context.user_data["data"] = dict(context.bot_data["data"])
+            context.user_data["update_date"] = context.bot_data["update_date"]
 
     context.user_data["age"] = None
     context.user_data["genre"] = None
@@ -37,7 +44,7 @@ async def start_poll(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
 
     context.user_data["polling_in_progress"] = True
 
-    ages = context.bot_data["data"].keys()
+    ages = context.user_data["data"].keys()
 
     await send_reply_keyboard(update, ages, 'Какое возрастное ограничение тебе подходит?')
 
@@ -73,32 +80,32 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             await finish_poll(update, context)
 
         elif context.user_data["age"] is None:
-            if update.message.text in context.bot_data["data"]:
+            if update.message.text in context.user_data["data"]:
                 age = update.message.text
                 context.user_data["age"] = age
 
-                genres = context.bot_data["data"][age].keys()
+                genres = context.user_data["data"][age].keys()
 
                 await send_reply_keyboard(update, genres, 'Давай теперь определимся с темой?')
 
             else:
-                ages = context.bot_data["data"].keys()
+                ages = context.user_data["data"].keys()
 
                 await send_reply_keyboard(update, ages, 'Какое возрастное ограничение тебе подходит?')
 
         elif context.user_data["genre"] is None:
             age = context.user_data["age"]
 
-            if update.message.text in context.bot_data["data"][age]:
+            if update.message.text in context.user_data["data"][age]:
                 genre = update.message.text
                 context.user_data["genre"] = genre
 
-                subgenres = context.bot_data["data"][age][genre].keys()
+                subgenres = context.user_data["data"][age][genre].keys()
 
                 await send_reply_keyboard(update, subgenres,  'Я тебя понял. Давай уточним?')
 
             else:
-                genres = context.bot_data["data"][age].keys()
+                genres = context.user_data["data"][age].keys()
 
                 await send_reply_keyboard(update, genres, 'Давай теперь определимся с темой?')
 
@@ -106,7 +113,7 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             age = context.user_data["age"]
             genre = context.user_data["genre"]
 
-            if update.message.text in context.bot_data["data"][age][genre]:
+            if update.message.text in context.user_data["data"][age][genre]:
                 finish_answers = ["Продолжить", "Спасибо за помощь"]
 
                 await send_reply_keyboard(update, finish_answers, 'Смотри, я могу предложить посмотреть эти варианты...')
@@ -114,12 +121,12 @@ async def book_find_process(update: Update, context: ContextTypes.DEFAULT_TYPE) 
                 subgenre = update.message.text
                 context.user_data["subgenre"] = subgenre
 
-                books = context.bot_data["data"][age][genre][subgenre]
+                books = context.user_data["data"][age][genre][subgenre]
 
                 await send_result(update, context, books)
 
             else:
-                subgenres = context.bot_data["data"][age][genre].keys()
+                subgenres = context.user_data["data"][age][genre].keys()
 
                 await send_reply_keyboard(update, subgenres, 'Я тебя понял. Давай уточним?')
 

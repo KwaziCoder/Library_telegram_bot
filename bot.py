@@ -2,8 +2,7 @@ import logging
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
 
-from admin import upload_doc, upload_image, define_sticker, info, get_data, upload_photo, upload_zip, update_data, \
-    cancel_update_data
+from admin import define_sticker, info, get_data, upload_zip, update_data, cancel_update_data
 from books import book_find_process, start_poll
 from logger import set_logger
 
@@ -35,10 +34,7 @@ if __name__ == '__main__':
 
         stickers_handler = MessageHandler(filters.Sticker.ALL, define_sticker)
 
-        upload_doc_handler = MessageHandler(filters.Document.FileExtension("xlsx"), upload_doc)
         upload_zip_handler = MessageHandler(filters.Document.ZIP, upload_zip)
-        upload_image_handler = MessageHandler(filters.Document.IMAGE, upload_image)
-        upload_photo_handler = MessageHandler(filters.PHOTO, upload_photo)
 
         application.add_handler(start_handler)
         application.add_handler(info_handler)
@@ -50,10 +46,7 @@ if __name__ == '__main__':
 
         application.add_handler(stickers_handler)
 
-        application.add_handler(upload_doc_handler)
         application.add_handler(upload_zip_handler)
-        application.add_handler(upload_image_handler)
-        application.add_handler(upload_photo_handler)
 
         logging.info("All handlers are added!")
         logging.info("App start running...")

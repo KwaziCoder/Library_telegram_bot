@@ -40,7 +40,9 @@ async def parse_excel(update: Update, context: ContextTypes.DEFAULT_TYPE, file=N
     second_level = ""
     third_level = ""
 
-    for i in range(1, len(rows)):
+    for i in range(0, len(rows)):
+        if None in rows[i]:
+            continue
         for j in range(0, len(rows[i])):
             if j == 0:  # Возраст
                 if rows[i][j] in data_dict:

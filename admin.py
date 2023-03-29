@@ -73,7 +73,7 @@ async def upload_zip(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         with ZipFile('./assets/test_files/data.zip', 'r') as zip_arcive:
             zip_arcive.extractall('./assets/test_files')
 
-        await parse_excel(update, context, './assets/test_files/books.xlsx')
+        await parse_excel(update, context, 'assets/test_files/books.xlsx')
 
     await context.bot.send_message(update.effective_chat.id, "Данные загружены! ВНИМАНИЕ! Включен ТЕСТОВЫЙ режим!\n\nОтправь мне команду /start и проверь, нормально ли работает опрос на новых данных.\n\nЕсли все хорошо, то отправь мне команду /update, чтобы обновить данные для всех пользователей.\n\nЧтобы вернуться к старым данным и выйти из тестового режима, отправь мне команду /cancel")
 
@@ -107,24 +107,9 @@ async def cancel_update_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
         logging.info("Process of updating data is canceled!")
 
 
-async def upload_image(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    logging.info("Try of adding an image was detected!")
-
-    if await auth(update, context):
-        image = update.message.document
-        file = await context.bot.get_file(image.file_id)
-        await file.download_to_drive(f'./assets/images/{image.file_name}')
-        await context.bot.send_message(update.effective_chat.id, f"Файл '{image.file_name}' успешно загружен!")
-
-
-async def upload_photo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    logging.info("Try of adding an photo was detected!")
-
-    if await auth(update, context):
-        await context.bot.send_message(update.effective_chat.id, 'Прошу прощения, но я принимаю изображения только в формате файлов. В окне загрузки своих картинок обязательно снимите галочку "Сжать изображение".')
-
 
 async def define_sticker(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    print(update.message.sticker.file_id)
+    if await auth(update, context):
+        print(update.message.sticker.file_id)
 
 

@@ -69,8 +69,14 @@ async def finish_poll(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
 
 
 async def send_result(update: Update, context: ContextTypes.DEFAULT_TYPE, books) -> None:
+    source_dir = "files"
+
+    if "test_mode" in context.user_data:
+        if context.user_data["test_mode"]:
+            source_dir = "test_files"
+
     for book in books:
-        await context.bot.send_photo(update.effective_chat.id, f"./assets/images/{book[3]}",
+        await context.bot.send_photo(update.effective_chat.id, f"./assets/{source_dir}/{book[3]}",
                                      f"Название книги: {book[0]}\nАвтор: {book[1]}\nОписание: {book[2]}")
 
     await context.bot.send_message(update.effective_chat.id,

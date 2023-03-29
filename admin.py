@@ -53,12 +53,19 @@ async def upload_zip(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     if await auth(update, context):
         context.user_data["test_mode"] = True
 
+        for file in list(glob(os.path.join('assets/test_files', '*.*'))):
+            os.remove(file)
+
         zip_path = update.message.document
         zip_file = await context.bot.get_file(zip_path)
         await zip_file.download_to_drive('./assets/test_files/data.zip')
 
-        with ZipFile('./assets/test_files/data.zip', 'r') as zip_arcive:
+        with ZipFile('assets/test_files/data.zip', 'r') as zip_arcive:
             zip_arcive.extractall('./assets/test_files')
+
+        for file in list(glob(os.path.join('assets/test_files', '*.xlsx'))):
+            os.rename(file, "assets/test_files/books.xlsx")
+            break
 
         await parse_excel(update, context, 'assets/test_files/books.xlsx')
 
@@ -68,6 +75,9 @@ async def upload_zip(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
 async def update_data(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if await auth(update, context):
         logging.info("Process of updating data is launched!")
+
+        for file in list(glob(os.path.join('assets/files', '*.*'))):
+            os.remove(file)
 
         for file in list(glob(os.path.join('assets/test_files', '*.*'))):
             shutil.move(file, 'assets/files')
@@ -85,7 +95,10 @@ async def update_data(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
 
 async def cancel_update_data(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if await auth(update, context):
-        context.user_data["data"] = context.bot_data["data"]
+        if "data" in context.bot_data:
+            context.user_data["data"] = context.bot_data["data"]
+        else:
+            del context.user_data["data"]
         context.user_data["test_mode"] = False
 
         await context.bot.send_message(update.effective_chat.id,

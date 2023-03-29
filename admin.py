@@ -44,20 +44,7 @@ async def get_data(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     logging.info("Command 'data' was entered!")
 
     if await auth(update, context):
-        await context.bot.send_document(update.effective_chat.id, './assets/files/books.xlsx')
-
-
-async def upload_doc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    logging.info("Try of adding a new excel file was detected!")
-
-    if await auth(update, context):
-        context.user_data["test_mode"] = True
-
-        excel = update.message.document
-        file = await context.bot.get_file(excel)
-        await file.download_to_drive('./assets/test_files/books.xlsx')
-        await parse_excel(update, context)
-        await context.bot.send_message(update.effective_chat.id, "Данные загружены! ВНИМАНИЕ! Включен ТЕСТОВЫЙ режим!\n\nОтправь мне команду /start и проверь, нормально ли работает опрос на новых данных.\n\nЕсли все хорошо, то отправь мне команду /update, чтобы обновить данные для всех пользователей.\n\nЧтобы вернуться к старым данным и выйти из тестового режима, отправь мне команду /cancel")
+        await context.bot.send_document(update.effective_chat.id, './assets/files/data.zip')
 
 
 async def upload_zip(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
